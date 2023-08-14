@@ -25,10 +25,13 @@ public class MemberController {
 
     @PostMapping("/member/register")
     public String registerSubmit(Model model, HttpServletRequest request, MemberInput parameter) {
-
         boolean result = memberService.register(parameter);
         model.addAttribute("result", result);
-
         return "member/register_complete";
+    }
+
+    @GetMapping("/member/email-auth")
+    public String emailAuth(HttpServletRequest request) {
+        String
     }
 }
