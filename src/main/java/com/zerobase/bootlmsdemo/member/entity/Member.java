@@ -24,4 +24,7 @@ public class Member {
     private String password;
     private LocalDateTime registered;
 
+    private boolean emailAuthYn;
+    private String emailAuthKey;
+
 }

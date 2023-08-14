@@ -1,13 +1,15 @@
-package com.zerobase.bootlmsdemo.member.service;
+package com.zerobase.bootlmsdemo.member.service.imlp;
 
 import com.zerobase.bootlmsdemo.member.entity.Member;
 import com.zerobase.bootlmsdemo.member.model.MemberInput;
 import com.zerobase.bootlmsdemo.member.repository.MemberRepository;
+import com.zerobase.bootlmsdemo.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -29,7 +31,13 @@ public class MemberServiceImpl implements MemberService {
         member.setPhone(memberInput.getPhone());
         member.setPassword(memberInput.getPassword());
         member.setRegistered(LocalDateTime.now());
+        member.setEmailAuthYn(false);
+        member.setEmailAuthKey(UUID.randomUUID().toString());
         memberRepository.save(member);
-        return false;
+
+        String email = memberInput.getUserId();
+        String subject = "fastlms 사이트 가입을 축하드립니다.";
+        String text = "<p> fastlms 사이트 가입을 축하드립니다."
+        return true;
     }
 }

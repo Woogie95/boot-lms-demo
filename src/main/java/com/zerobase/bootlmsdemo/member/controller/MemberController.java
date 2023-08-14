@@ -28,7 +28,6 @@ public class MemberController {
 
         boolean result = memberService.register(parameter);
         model.addAttribute("result", result);
-        System.out.println(result + "??????????????????");
 
         return "member/register_complete";
     }
