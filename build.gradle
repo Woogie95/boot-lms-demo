@@ -28,6 +28,9 @@ dependencies {
 
     // 메일 인증
     implementation 'org.springframework.boot:spring-boot-starter-mail'
+    // 시큐리티
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+
 
     runtimeOnly 'com.mysql:mysql-connector-j'
     compileOnly 'org.projectlombok:lombok'

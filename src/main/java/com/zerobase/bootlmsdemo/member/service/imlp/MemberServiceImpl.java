@@ -28,14 +28,15 @@ public class MemberServiceImpl implements MemberService {
         }
 
         String uuid = UUID.randomUUID().toString();
-        Member member = new Member();
-        member.setUserId(memberInput.getUserId());
-        member.setUserName(memberInput.getUserName());
-        member.setPhone(memberInput.getPhone());
-        member.setPassword(memberInput.getPassword());
-        member.setRegistered(LocalDateTime.now());
-        member.setEmailAuthYn(false);
-        member.setEmailAuthKey(uuid);
+        Member member = Member.builder()
+                .userId(memberInput.getUserId())
+                .userName(memberInput.getUserName())
+                .phone(memberInput.getPhone())
+                .password(memberInput.getPassword())
+                .registered(LocalDateTime.now())
+                .emailAuthYn(false)
+                .emailAuthKey(uuid)
+                .build();
         memberRepository.save(member);
 
         String email = memberInput.getUserId();
@@ -43,6 +44,27 @@ public class MemberServiceImpl implements MemberService {
         String text = "<p>fastlms 사이트 가입을 축하드립니다.<p><p>아래 링크를 클릭하셔서 가입을 완료 하세요.</p>"
                 + "<div><a target='_blank' href='http://localhost:8080/member/email-auth?id=" + uuid + "'> 가입 완료 </a></div>";
         mailComponents.sendMail(email, subject, text);
+        return true;
+    }
+
+    @Override
+    public boolean emailAuth(String uuid) {
+
+        Optional<Member> optionalMember = memberRepository.findByEmailAuthKey(uuid);
+        if (!optionalMember.isPresent()) {
+            return false;
+        }
+
+        Member member = optionalMember.get();
+
+        if (member.isEmailAuthYn()) {
+            return false;
+        }
+
+        member.setEmailAuthYn(true);
+        member.setRegistered(LocalDateTime.now());
+        memberRepository.save(member);
+
         return true;
     }
 }
