@@ -1,23 +1,56 @@
 package com.zerobase.bootlmsdemo.main.controller;
 
 import com.zerobase.bootlmsdemo.components.MailComponents;
+import com.zerobase.bootlmsdemo.member.service.imlp.MemberServiceImpl;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
 
+import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDateTime;
+
+@Slf4j
 @RequiredArgsConstructor
 @Controller
 public class MainController {
 
     private final MailComponents mailComponents;
+    private final MemberServiceImpl memberService;
 
-    @GetMapping("/")
-    public String index() {
-        String email = "asdqw18@gmail.com";
-        String subject = "Lecture";
-        String text = "메일 테스트";
+    @RequestMapping("/")
+    public String index(HttpServletRequest request, Model model) {
+        String userAgent = RequestUtils.getUserAgent(request);
+        String clientsIp = RequestUtils.getClientIP(request);
+        String userId = SecurityContextHolder.getContext().getAuthentication().getName();
 
-        mailComponents.sendMail(email, subject, text);
+        log.info(userAgent);
+        log.info(clientsIp);
+        log.info(userId);
+        if (userId != "anonymousUser") {
+            loginHistoryService.saveLoginHistory(userId, clientsIp, userAgent);
+            memberService.updateLastLogin(userId, LocalDateTime.now());
+
+            BannerParam bannerParam = new BannerParam();
+            bannerParam.init(); // 파라미터 초기화
+            List<BannerDto> bannerList = bannerService.list(bannerParam); // 배너 목록 가져오기
+
+            model.addAttribute("banners", bannerList);
+        }
+
         return "index";
     }
+
+
+
+    @RequestMapping("/error/denied")
+    public String errorDenied() {
+
+        return "error/denied";
+    }
+
+
+
 }
